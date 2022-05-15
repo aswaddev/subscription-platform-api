@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubscriberRequest;
 use App\Models\Subscriber;
 use App\Models\Website;
 use App\Services\SubscriberService;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class SubscriberController extends Controller
 {
@@ -24,17 +23,13 @@ class SubscriberController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\SubscriberRequest  $request
      * @param  \App\Models\Website  $website
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, SubscriberService $subscriberService, Website $website)
+    public function store(SubscriberRequest $request, SubscriberService $subscriberService, Website $website)
     {
-        $data = $request->validate([
-            'email' => ['required', 'email', Rule::unique('subscribers', 'email')->where(function ($query) use ($website) {
-                $query->where('website_id', $website->id);
-            })]
-        ]);
+        $data = $request->validated();
 
         $subscriber = $subscriberService->store($website, $data);
 

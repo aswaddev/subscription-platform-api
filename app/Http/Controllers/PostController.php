@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\Website;
 use App\Services\PostService;
-use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -23,17 +23,13 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\PostRequest  $request
      * @param  \App\Models\Website  $website
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, PostService $postService, Website $website)
+    public function store(PostRequest $request, PostService $postService, Website $website)
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'website_id' => 'required|numeric|exists:websites,id'
-        ]);
+        $data = $request->validated();
 
         return $postService->store($website, $data);
     }
@@ -53,18 +49,14 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\PostRequest  $request
      * @param  \App\Models\Website  $website
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PostService $postService, Website $website, Post $post)
+    public function update(PostRequest $request, PostService $postService, Website $website, Post $post)
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'website_id' => 'required|numeric|exists:websites,id'
-        ]);
+        $data = $request->validated();
 
         $postService->update($website, $post, $data);
 

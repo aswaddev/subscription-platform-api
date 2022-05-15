@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PostCreated;
 use App\Models\Post;
 use App\Models\Website;
+use App\Services\PostService;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -27,7 +27,7 @@ class PostController extends Controller
      * @param  \App\Models\Website  $website
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Website $website)
+    public function store(Request $request, PostService $postService, Website $website)
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -35,11 +35,7 @@ class PostController extends Controller
             'website_id' => 'required|numeric|exists:websites,id'
         ]);
 
-        $post = Post::create($data);
-
-        PostCreated::dispatch($post);
-
-        return $post;
+        return $postService->store($website, $data);
     }
 
     /**
@@ -62,7 +58,7 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Website $website, Post $post)
+    public function update(Request $request, PostService $postService, Website $website, Post $post)
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -70,7 +66,7 @@ class PostController extends Controller
             'website_id' => 'required|numeric|exists:websites,id'
         ]);
 
-        $post->update($data);
+        $postService->update($website, $post, $data);
 
         return $post;
     }
